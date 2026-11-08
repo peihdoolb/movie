@@ -1,42 +1,30 @@
-# 🎬 Peih Movie Player & Plugin Repository
+# 🎬 Peih Movie Player (Tương đương Vax)
 
-Dự án phát triển ứng dụng xem phim độc lập và Kho Plugin mở rộng cho Android (hỗ trợ cả **JKHX Player** `1.apk`, **Stremio**, và ứng dụng độc lập **Peih Movie**).
-
----
-
-## 🌟 1. Kho Plugin cho app `1.apk` (JKHX Player)
-
-Nếu bạn đang dùng ứng dụng **`1.apk` (JKHX Player)** hoặc các trình phát tương tự, bạn có thể thêm kho plugin này trực tiếp:
-
-1. Mở ứng dụng **`1.apk`**.
-2. Vào phần **Cài đặt** (Settings) ➔ **Quản lý Plugin / Repository** (Plugins).
-3. Bấm **Thêm Repository** (Add Repository) và dán đường link sau:
-   ```text
-   https://raw.githubusercontent.com/peihdoolb/movie/main/repo.json
-   ```
-4. Bấm **Lưu / Cập nhật**: Toàn bộ danh sách 6 plugin sau sẽ xuất hiện sẵn sàng để cài đặt:
-   - **KKPhim**: Cập nhật phim mới liên tục, luồng stream m3u8 nhanh & ổn định.
-   - **OPhim**: Kho phim bộ, phim lẻ, anime phong phú.
-   - **Blu Phim [MOVIE]**: Nguồn phim Bluphim chất lượng cao (đã giải mã từ Vax).
-   - **Hoạt Hình 3D [HH3D]**: Phim hoạt hình 3D Trung Quốc vietsub / thuyết minh.
-   - **AnimeVV [ANIME]**: Kho phim anime Nhật Bản chọn lọc.
-   - **Sài Gòn Phim**: Nguồn phim điện ảnh, truyền hình tổng hợp.
+Ứng dụng xem phim độc lập, mã nguồn mở dành cho Android:
+- **100% Không bị kiểm tra hay khóa từ xa**: Tự do cài đặt, không phụ thuộc máy chủ bên thứ ba.
+- **Bộ chọn nguồn phát (Source Selector)**: Cho phép chuyển đổi linh hoạt giữa các nguồn:
+  - ⚡ **KKPhim VIP**: Kho phim số 1, cập nhật liên tục, server m3u8 siêu tốc.
+  - 💎 **Blu Phim**: Nguồn phim Bluphim chất lượng cao (đã giải mã từ Vax).
+  - 🐉 **Hoạt Hình 3D (HH3D)**: Chuyên phim hoạt hình 3D Donghua Trung Quốc.
+  - 🍿 **AnimeVV**: Kho hoạt hình anime Nhật Bản phong phú.
+  - 📺 **Kho Plugin Vax (88 nguồn)**: Tích hợp sẵn toàn bộ 88 plugin từ `moviex.json`.
+- **Trang chủ phong phú (Netflix style)**:
+  - Hero Banner tự động hiển thị phim nổi bật.
+  - 5 danh mục cuộn ngang: Phim Mới Cập Nhật, Phim Bộ Đang Hot, Phim Lẻ Chiếu Rạp, Hoạt Hình & Anime, TV Shows & Gameshow (hơn 120 phim xuất hiện ngay lập tức).
+  - Hỗ trợ cuộn vô tận (Infinite Scroll) khi duyệt theo từng chuyên mục.
+- **Trình phát ExoPlayer chuyên nghiệp**: HLS m3u8, MP4, tự động xoay ngang toàn màn hình (Sensor Landscape), chống tắt màn hình.
 
 ---
 
-## 🚀 2. Tải Ứng dụng APK độc lập (Peih Movie)
+## 🚀 Tải về cài đặt
 
-Dự án này tích hợp sẵn **GitHub Actions CI/CD** tự động biên dịch mã nguồn Android Kotlin mỗi khi cập nhật code:
+👉 **[Tải PeihMovie-release.apk mới nhất (v1.1.0)](https://github.com/peihdoolb/movie/releases/download/v1.1.0/PeihMovie-release.apk)**
 
-- **100% Độc lập**: Không chứa bất kỳ cơ chế kiểm tra phiên bản từ xa (`update.json`) nào của bên thứ ba, không bao giờ bị khóa tính năng.
-- **Trình phát ExoPlayer**: Hỗ trợ phát HLS m3u8, MP4, tùy biến header chống chặn referer, chạy full-screen mượt mà.
-- **Giao diện Material 3**: Tìm kiếm thời gian thực, duyệt theo danh mục và chọn tập phim nhanh chóng.
-
-👉 **Tải file APK mới nhất tại:** [GitHub Releases](https://github.com/peihdoolb/movie/releases)
+Hoặc truy cập: [GitHub Releases](https://github.com/peihdoolb/movie/releases)
 
 ---
 
-## 📂 3. Cấu trúc dự án
+## 📂 Cấu trúc dự án
 
 ```text
 peihdoolb/movie/
@@ -44,19 +32,15 @@ peihdoolb/movie/
 │   └── build-apk.yml        # CI/CD tự động build APK trên GitHub Actions
 ├── app/                     # Mã nguồn ứng dụng Android Kotlin (Jetpack Compose + ExoPlayer)
 │   ├── build.gradle.kts
+│   ├── src/main/assets/     # Tích hợp sẵn 88 nguồn phim Vax (moviex.json, filex.json...)
 │   └── src/main/java/com/peihdoolb/movie/
-├── data/                    # Toàn bộ kho JSON giải mã gốc của Vax
-│   ├── moviex.json          # 88 plugins Vax
-│   ├── filex.json           # 162 plugins Vax
-│   └── xfile.json           # 74 plugins Vax
-├── plugins/                 # Các plugin scraper JavaScript cho JKHX / QuickJS
-│   ├── kkphim.js
-│   ├── ophim.js
-│   ├── bluphim.js
-│   ├── hh3d.js
-│   ├── animevv.js
-│   └── saigonphim.js
-├── repo.json                # Repository Manifest chuẩn cho JKHX Player
-├── build.gradle.kts
-└── settings.gradle.kts
+│       ├── MainActivity.kt
+│       ├── ui/screens/
+│       │   ├── HomeScreen.kt    # Trang chủ đa danh mục, Hero banner, chọn nguồn
+│       │   ├── DetailScreen.kt  # Chi tiết phim, chọn server, danh sách tập
+│       │   ├── SearchScreen.kt  # Tìm kiếm phim thời gian thực
+│       │   └── SourcesScreen.kt # Quản lý và tìm kiếm 88 nguồn phim
+│       └── ui/player/
+│           └── VideoPlayerActivity.kt # ExoPlayer toàn màn hình
+└── repo.json                # Repository Manifest cho các app tương thích
 ```

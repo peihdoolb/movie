@@ -49,18 +49,19 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: v1.0.0
-          name: PeihMovie v1.0.0
+          tag_name: v1.1.0
+          name: PeihMovie v1.1.0 - Vax Experience Upgrade
           body: |
-            ## 🎉 Peih Movie Player v1.0.0
+            ## 🚀 Peih Movie Player v1.1.0 (Bản nâng cấp tương đương Vax)
             
-            Ứng dụng xem phim độc lập, mã nguồn mở:
-            - ✅ Không bị kiểm tra hay khóa từ xa.
-            - ✅ Tích hợp sẵn nguồn phim KKPhim, OPhim và các plugin cộng đồng.
-            - ✅ Hỗ trợ ExoPlayer phát m3u8 siêu mượt.
+            - 🌟 **Trang chủ phong phú (Netflix style)**: Hero banner nổi bật, hàng loạt danh mục cuộn ngang (Phim Mới, Phim Bộ, Phim Lẻ, Hoạt Hình, TV Shows) với hơn 120+ phim hiển thị tức thì.
+            - 🔄 **Bộ chọn nguồn phim (Source Selector)**: Cho phép chuyển đổi linh hoạt giữa các nguồn: KKPhim VIP, Blu Phim, Hoạt Hình 3D, AnimeVV.
+            - 📦 **Tích hợp sẵn 88 nguồn Vax**: Màn hình "Kho nguồn" cho phép tìm kiếm và duyệt danh mục 88 plugin từ `moviex.json`.
+            - ♾️ **Cuộn vô tận (Infinite Scroll)**: Tự động tải thêm phim không giới hạn khi duyệt theo từng danh mục.
+            - 🎬 **Trình phát ExoPlayer chuyên nghiệp**: HLS m3u8, MP4, toàn màn hình cảm biến (sensor landscape), giữ màn hình sáng.
             
             ### Tải về cài đặt:
-            - **[PeihMovie-release.apk](https://github.com/${{ github.repository }}/releases/download/v1.0.0/PeihMovie-release.apk)**
+            - **[PeihMovie-release.apk](https://github.com/${{ github.repository }}/releases/download/v1.1.0/PeihMovie-release.apk)**
           files: |
             release-apks/PeihMovie-release.apk
             release-apks/PeihMovie-debug.apk

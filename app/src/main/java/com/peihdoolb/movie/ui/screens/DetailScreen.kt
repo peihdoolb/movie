@@ -15,8 +15,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -34,33 +37,23 @@ fun DetailScreen(
     onPlay: (url: String, title: String) -> Unit
 ) {
     var detail by remember { mutableStateOf<MovieDetail?>(null) }
+    var selectedServer by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(true) }
+    var isDescExpanded by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(movieSlug) {
         scope.launch {
             isLoading = true
             detail = repository.getMovieDetail(movieSlug)
+            if (detail != null && detail!!.servers.isNotEmpty()) {
+                selectedServer = detail!!.servers.first()
+            }
             isLoading = false
         }
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(detail?.name ?: "Chi tiết phim", maxLines = 1) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Quay lại")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.onBackground,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onBackground
-                )
-            )
-        },
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         Box(
@@ -75,14 +68,67 @@ fun DetailScreen(
                 )
             } else if (detail != null) {
                 val movie = detail!!
+                val currentEpisodes = if (selectedServer != null) {
+                    movie.episodes.filter { it.server == selectedServer }
+                } else {
+                    movie.episodes
+                }
+
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
+                    contentPadding = PaddingValues(bottom = 32.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
+                    // Header Backdrop
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(260.dp)
+                        ) {
+                            AsyncImage(
+                                model = movie.thumb.ifEmpty { movie.poster },
+                                contentDescription = movie.name,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                            // Gradient
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors = listOf(
+                                                Color(0x80000000),
+                                                Color(0x33000000),
+                                                Color(0xFF121212)
+                                            )
+                                        )
+                                    )
+                            )
+                            // Top Bar Icons
+                            IconButton(
+                                onClick = onBack,
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .align(Alignment.TopStart)
+                                    .background(Color(0x66000000), RoundedCornerShape(20.dp))
+                            ) {
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = "Quay lại",
+                                    tint = Color.White
+                                )
+                            }
+                        }
+                    }
+
+                    // Movie Info Card
                     item {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             AsyncImage(
@@ -90,7 +136,7 @@ fun DetailScreen(
                                 contentDescription = movie.name,
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier
-                                    .width(130.dp)
+                                    .width(110.dp)
                                     .aspectRatio(0.67f)
                                     .clip(RoundedCornerShape(8.dp))
                                     .background(MaterialTheme.colorScheme.surface)
@@ -98,7 +144,7 @@ fun DetailScreen(
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = movie.name,
-                                    fontSize = 18.sp,
+                                    fontSize = 19.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onBackground
                                 )
@@ -106,77 +152,167 @@ fun DetailScreen(
                                     Text(
                                         text = movie.originName,
                                         fontSize = 13.sp,
-                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )
                                 }
-                                if (movie.year > 0) {
-                                    Text(
-                                        text = "Năm: ${movie.year}",
-                                        fontSize = 13.sp,
-                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                                    )
+                                Spacer(modifier = Modifier.height(6.dp))
+
+                                // Badges
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Surface(
+                                        color = MaterialTheme.colorScheme.primary,
+                                        shape = RoundedCornerShape(4.dp)
+                                    ) {
+                                        Text(
+                                            text = movie.quality,
+                                            color = Color.White,
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                        )
+                                    }
+                                    if (movie.lang.isNotEmpty()) {
+                                        Surface(
+                                            color = MaterialTheme.colorScheme.surface,
+                                            shape = RoundedCornerShape(4.dp)
+                                        ) {
+                                            Text(
+                                                text = movie.lang,
+                                                color = MaterialTheme.colorScheme.onSurface,
+                                                fontSize = 10.sp,
+                                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                            )
+                                        }
+                                    }
+                                    if (movie.year > 0) {
+                                        Text(
+                                            text = "${movie.year}",
+                                            fontSize = 12.sp,
+                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                                        )
+                                    }
+                                    if (movie.time.isNotEmpty()) {
+                                        Text(
+                                            text = "• ${movie.time}",
+                                            fontSize = 12.sp,
+                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                                        )
+                                    }
                                 }
+
                                 Spacer(modifier = Modifier.height(12.dp))
-                                if (movie.episodes.isNotEmpty()) {
+
+                                if (currentEpisodes.isNotEmpty()) {
                                     Button(
                                         onClick = {
-                                            val firstEp = movie.episodes.first()
-                                            onPlay(firstEp.m3u8, "${movie.name} - ${firstEp.name}")
+                                            val ep = currentEpisodes.first()
+                                            onPlay(ep.m3u8, "${movie.name} - ${ep.name}")
                                         },
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = MaterialTheme.colorScheme.primary
                                         ),
-                                        shape = RoundedCornerShape(8.dp)
+                                        shape = RoundedCornerShape(8.dp),
+                                        modifier = Modifier.fillMaxWidth()
                                     ) {
                                         Icon(Icons.Default.PlayArrow, contentDescription = null)
-                                        Spacer(modifier = Modifier.width(4.dp))
-                                        Text("Xem ngay")
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text("Xem Tập 1", fontWeight = FontWeight.Bold)
                                     }
                                 }
                             }
                         }
                     }
 
+                    // Description
                     if (movie.description.isNotEmpty()) {
                         item {
-                            Text(
-                                text = "Nội dung phim",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                            Spacer(modifier = Modifier.height(6.dp))
-                            Text(
-                                text = movie.description.replace(Regex("<[^>]*>"), ""),
-                                fontSize = 13.sp,
-                                lineHeight = 20.sp,
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f)
-                            )
+                            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                Text(
+                                    text = "Nội dung phim",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                                Spacer(modifier = Modifier.height(6.dp))
+                                val cleanDesc = movie.description.replace(Regex("<[^>]*>"), "").trim()
+                                Text(
+                                    text = cleanDesc,
+                                    fontSize = 13.sp,
+                                    lineHeight = 20.sp,
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                                    maxLines = if (isDescExpanded) Int.MAX_VALUE else 3,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                if (cleanDesc.length > 150) {
+                                    Text(
+                                        text = if (isDescExpanded) "Thu gọn ▲" else "Xem thêm ▼",
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier
+                                            .clickable { isDescExpanded = !isDescExpanded }
+                                            .padding(top = 4.dp)
+                                    )
+                                }
+                            }
                         }
                     }
 
-                    if (movie.episodes.isNotEmpty()) {
+                    // Server Tabs (if multiple servers)
+                    if (movie.servers.size > 1) {
                         item {
-                            Text(
-                                text = "Danh sách tập (${movie.episodes.size} tập)",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
+                            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                Text(
+                                    text = "Chọn nguồn phát (Server)",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    items(movie.servers) { server ->
+                                        val isSelected = server == selectedServer
+                                        FilterChip(
+                                            selected = isSelected,
+                                            onClick = { selectedServer = server },
+                                            label = { Text(server, fontSize = 12.sp) },
+                                            colors = FilterChipDefaults.filterChipColors(
+                                                selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                                selectedLabelColor = Color.White
+                                            )
+                                        )
+                                    }
+                                }
+                            }
                         }
+                    }
 
+                    // Episode List
+                    if (currentEpisodes.isNotEmpty()) {
                         item {
-                            LazyRow(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                items(movie.episodes) { ep ->
-                                    EpisodeChip(
-                                        episode = ep,
-                                        onClick = {
-                                            onPlay(ep.m3u8, "${movie.name} - ${ep.name}")
-                                        }
-                                    )
+                            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                                Text(
+                                    text = "Danh sách tập (${currentEpisodes.size} tập)",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+                                LazyRow(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    items(currentEpisodes) { ep ->
+                                        EpisodeButton(
+                                            episode = ep,
+                                            onClick = {
+                                                onPlay(ep.m3u8, "${movie.name} - ${ep.name}")
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -194,22 +330,27 @@ fun DetailScreen(
 }
 
 @Composable
-fun EpisodeChip(
+fun EpisodeButton(
     episode: EpisodeItem,
     onClick: () -> Unit
 ) {
     Surface(
-        modifier = Modifier.clickable { onClick() },
+        onClick = onClick,
         color = MaterialTheme.colorScheme.surface,
-        shape = RoundedCornerShape(6.dp),
-        tonalElevation = 2.dp
+        shape = RoundedCornerShape(8.dp),
+        tonalElevation = 3.dp,
+        modifier = Modifier.height(44.dp)
     ) {
-        Text(
-            text = episode.name,
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurface
-        )
+        Box(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = episode.name,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
 }

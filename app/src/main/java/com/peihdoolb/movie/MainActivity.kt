@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import com.peihdoolb.movie.ui.screens.DetailScreen
 import com.peihdoolb.movie.ui.screens.HomeScreen
 import com.peihdoolb.movie.ui.screens.SearchScreen
 import com.peihdoolb.movie.ui.screens.SettingsScreen
+import com.peihdoolb.movie.ui.screens.SourcesScreen
 import com.peihdoolb.movie.ui.theme.PeihMovieTheme
 
 class MainActivity : ComponentActivity() {
@@ -37,7 +39,7 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(
                     bottomBar = {
-                        if (currentRoute in listOf("home", "search", "settings")) {
+                        if (currentRoute in listOf("home", "search", "sources", "settings")) {
                             NavigationBar(
                                 containerColor = MaterialTheme.colorScheme.surface
                             ) {
@@ -57,6 +59,16 @@ class MainActivity : ComponentActivity() {
                                     selected = currentRoute == "search",
                                     onClick = {
                                         navController.navigate("search") {
+                                            popUpTo("home")
+                                        }
+                                    }
+                                )
+                                NavigationBarItem(
+                                    icon = { Icon(Icons.Default.Widgets, contentDescription = "Kho nguồn") },
+                                    label = { Text("Kho nguồn") },
+                                    selected = currentRoute == "sources",
+                                    onClick = {
+                                        navController.navigate("sources") {
                                             popUpTo("home")
                                         }
                                     }
@@ -85,6 +97,9 @@ class MainActivity : ComponentActivity() {
                                 repository = repository,
                                 onMovieClick = { slug ->
                                     navController.navigate("detail/$slug")
+                                },
+                                onSearchClick = {
+                                    navController.navigate("search")
                                 }
                             )
                         }
@@ -95,6 +110,9 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("detail/$slug")
                                 }
                             )
+                        }
+                        composable("sources") {
+                            SourcesScreen(repository = repository)
                         }
                         composable("settings") {
                             SettingsScreen(repository = repository)
