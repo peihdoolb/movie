@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Peih Movie</string>
+    <string name="tab_home">Trang chủ</string>
+    <string name="tab_search">Tìm kiếm</string>
+    <string name="tab_sources">Nguồn phim</string>
+    <string name="tab_settings">Cài đặt</string>
+</resources>

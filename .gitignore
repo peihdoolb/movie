@@ -1,0 +1,21 @@
+# Binaries and APKs
+*.apk
+*.zip
+*.dex
+
+# Build artifacts
+.gradle/
+build/
+bin/
+out/
+
+# IDE & OS
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.tmp
+*.log
+scratch/

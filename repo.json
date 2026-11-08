@@ -1,0 +1,92 @@
+{
+  "name": "Peihdoolb Movie Repository",
+  "description": "Kho plugin phim cộng đồng: KKPhim, OPhim, BluPhim, HH3D, AnimeVV, SaiGonPhim",
+  "version": "1.0.0",
+  "scrapers": [
+    {
+      "apiVersion": 1,
+      "id": "kkphim",
+      "name": "KKPhim (Nhanh & Ổn định)",
+      "version": "1.0.0",
+      "author": "peihdoolb",
+      "description": "Nguồn phim KKPhim chất lượng cao, cập nhật liên tục m3u8",
+      "entry": "plugins/kkphim.js",
+      "filename": "kkphim.js",
+      "language": "vi",
+      "supportedTypes": "movie,tv",
+      "isAdult": false,
+      "enabled": true
+    },
+    {
+      "apiVersion": 1,
+      "id": "ophim",
+      "name": "OPhim (Kho phim phong phú)",
+      "version": "1.0.0",
+      "author": "peihdoolb",
+      "description": "Nguồn phim OPhim đa dạng thể loại, stream m3u8 nhanh",
+      "entry": "plugins/ophim.js",
+      "filename": "ophim.js",
+      "language": "vi",
+      "supportedTypes": "movie,tv",
+      "isAdult": false,
+      "enabled": true
+    },
+    {
+      "apiVersion": 1,
+      "id": "bluphim",
+      "name": "Blu Phim [MOVIE]",
+      "version": "1.0.1",
+      "author": "peihdoolb",
+      "description": "Nguồn phim Bluphim chất lượng cao từ Vax",
+      "entry": "plugins/bluphim.js",
+      "filename": "bluphim.js",
+      "language": "vi",
+      "supportedTypes": "movie,tv",
+      "isAdult": false,
+      "enabled": true
+    },
+    {
+      "apiVersion": 1,
+      "id": "hh3d",
+      "name": "Hoạt Hình 3D [HH3D]",
+      "version": "1.0.0",
+      "author": "peihdoolb",
+      "description": "Nguồn hoạt hình 3D Trung Quốc vietsub / thuyết minh",
+      "entry": "plugins/hh3d.js",
+      "filename": "hh3d.js",
+      "language": "vi",
+      "supportedTypes": "movie,tv",
+      "isAdult": false,
+      "enabled": true
+    },
+    {
+      "apiVersion": 1,
+      "id": "animevv",
+      "name": "AnimeVV [ANIME]",
+      "version": "1.0.0",
+      "author": "peihdoolb",
+      "description": "Kho phim hoạt hình anime Nhật Bản chọn lọc",
+      "entry": "plugins/animevv.js",
+      "filename": "animevv.js",
+      "language": "vi",
+      "supportedTypes": "movie,tv",
+      "isAdult": false,
+      "enabled": true
+    },
+    {
+      "apiVersion": 1,
+      "id": "saigonphim",
+      "name": "Sài Gòn Phim",
+      "version": "1.0.0",
+      "author": "peihdoolb",
+      "description": "Nguồn phim điện ảnh, truyền hình tổng hợp",
+      "entry": "plugins/saigonphim.js",
+      "filename": "saigonphim.js",
+      "language": "vi",
+      "supportedTypes": "movie,tv",
+      "isAdult": false,
+      "enabled": true
+    }
+  ],
+  "plugins": []
+}
