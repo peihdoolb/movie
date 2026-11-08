@@ -1,4 +1,4 @@
-name: Build & Release PeihMovie APK
+name: Build PeihMovie & Patch Vax-ver2
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build:
-    name: Build Android APK
+    name: Build & Patch APKs
     runs-on: ubuntu-latest
 
     steps:
@@ -28,20 +28,37 @@ jobs:
         with:
           gradle-version: '8.7'
 
-      - name: Build APKs
+      - name: Build PeihMovie APK
         run: |
-          gradle assembleDebug assembleRelease --stacktrace
+          gradle assembleRelease --stacktrace
 
-      - name: Rename APKs
+      - name: Prepare Release Directory
         run: |
           mkdir -p release-apks
-          cp app/build/outputs/apk/debug/app-debug.apk release-apks/PeihMovie-debug.apk
           cp app/build/outputs/apk/release/app-release.apk release-apks/PeihMovie-release.apk
+
+      - name: Clone & Patch Vax-ver2 APK (Never Locked)
+        run: |
+          echo "===> Downloading official VaxPlayer APK..."
+          wget -q https://github.com/youngbi/vaxapp/releases/download/NewUpdate/VaxPlayer.apk -O vax_orig.apk
+
+          echo "===> Patching update URL in classes2.dex to peihdoolb/movie/up.json..."
+          python scripts/patch_vax.py vax_orig.apk vax_patched.apk
+
+          echo "===> Generating signing key..."
+          keytool -genkey -v -keystore /tmp/debug.keystore -alias androiddebugkey -keypass android -storepass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
+
+          echo "===> Aligning and signing Vax-ver2.apk with apksigner (v2/v3 signature)..."
+          BUILD_TOOLS_DIR=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -n 1)
+          $BUILD_TOOLS_DIR/zipalign -v -p 4 vax_patched.apk vax_aligned.apk
+          $BUILD_TOOLS_DIR/apksigner sign --ks /tmp/debug.keystore --ks-pass pass:android --out release-apks/Vax-ver2.apk vax_aligned.apk
+          $BUILD_TOOLS_DIR/apksigner verify release-apks/Vax-ver2.apk
+          echo "===> Vax-ver2.apk built and verified successfully!"
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: PeihMovie-APKs
+          name: Movie-APKs
           path: release-apks/*
           retention-days: 30
 
@@ -49,21 +66,23 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: v1.1.0
-          name: PeihMovie v1.1.0 - Vax Experience Upgrade
+          tag_name: v2.0.0
+          name: Vax-ver2 & PeihMovie v2.0.0
           body: |
-            ## 🚀 Peih Movie Player v1.1.0 (Bản nâng cấp tương đương Vax)
+            ## 🚀 Vax-ver2 & PeihMovie Release v2.0.0
             
-            - 🌟 **Trang chủ phong phú (Netflix style)**: Hero banner nổi bật, hàng loạt danh mục cuộn ngang (Phim Mới, Phim Bộ, Phim Lẻ, Hoạt Hình, TV Shows) với hơn 120+ phim hiển thị tức thì.
-            - 🔄 **Bộ chọn nguồn phim (Source Selector)**: Cho phép chuyển đổi linh hoạt giữa các nguồn: KKPhim VIP, Blu Phim, Hoạt Hình 3D, AnimeVV.
-            - 📦 **Tích hợp sẵn 88 nguồn Vax**: Màn hình "Kho nguồn" cho phép tìm kiếm và duyệt danh mục 88 plugin từ `moviex.json`.
-            - ♾️ **Cuộn vô tận (Infinite Scroll)**: Tự động tải thêm phim không giới hạn khi duyệt theo từng danh mục.
-            - 🎬 **Trình phát ExoPlayer chuyên nghiệp**: HLS m3u8, MP4, toàn màn hình cảm biến (sensor landscape), giữ màn hình sáng.
+            ### 1. 🌟 Vax-ver2 (Bản Clone Vax Player gốc - Vĩnh viễn không bị khóa)
+            - **100% Giao diện, tính năng, hiệu ứng của Vax Player gốc**: Đổi nguồn đổi toàn bộ trang chủ, hỗ trợ đầy đủ các từ viết tắt `moviex`, `filex`, `xfile`.
+            - **Đã patch cơ chế kiểm tra update**: Trỏ về máy chủ `peihdoolb/movie/up.json` của bạn. Không bao giờ bị tác giả bên thứ ba khóa từ xa.
+            - 👉 **[Tải Vax-ver2.apk (Khuyên dùng)](https://github.com/${{ github.repository }}/releases/download/v2.0.0/Vax-ver2.apk)**
             
-            ### Tải về cài đặt:
-            - **[PeihMovie-release.apk](https://github.com/${{ github.repository }}/releases/download/v1.1.0/PeihMovie-release.apk)**
+            ---
+            
+            ### 2. 📱 PeihMovie v2.0.0 (Bản sửa lỗi Crash trình phát)
+            - Đã sửa triệt để lỗi crash khi chọn tập phim (nâng cấp theme Material3 & AppCompat).
+            - 👉 **[Tải PeihMovie-release.apk](https://github.com/${{ github.repository }}/releases/download/v2.0.0/PeihMovie-release.apk)**
           files: |
+            release-apks/Vax-ver2.apk
             release-apks/PeihMovie-release.apk
-            release-apks/PeihMovie-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

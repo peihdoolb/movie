@@ -1,46 +1,40 @@
-# 🎬 Peih Movie Player (Tương đương Vax)
+# 🎬 Vax-ver2 & Peih Movie Player
 
-Ứng dụng xem phim độc lập, mã nguồn mở dành cho Android:
-- **100% Không bị kiểm tra hay khóa từ xa**: Tự do cài đặt, không phụ thuộc máy chủ bên thứ ba.
-- **Bộ chọn nguồn phát (Source Selector)**: Cho phép chuyển đổi linh hoạt giữa các nguồn:
-  - ⚡ **KKPhim VIP**: Kho phim số 1, cập nhật liên tục, server m3u8 siêu tốc.
-  - 💎 **Blu Phim**: Nguồn phim Bluphim chất lượng cao (đã giải mã từ Vax).
-  - 🐉 **Hoạt Hình 3D (HH3D)**: Chuyên phim hoạt hình 3D Donghua Trung Quốc.
-  - 🍿 **AnimeVV**: Kho hoạt hình anime Nhật Bản phong phú.
-  - 📺 **Kho Plugin Vax (88 nguồn)**: Tích hợp sẵn toàn bộ 88 plugin từ `moviex.json`.
-- **Trang chủ phong phú (Netflix style)**:
-  - Hero Banner tự động hiển thị phim nổi bật.
-  - 5 danh mục cuộn ngang: Phim Mới Cập Nhật, Phim Bộ Đang Hot, Phim Lẻ Chiếu Rạp, Hoạt Hình & Anime, TV Shows & Gameshow (hơn 120 phim xuất hiện ngay lập tức).
-  - Hỗ trợ cuộn vô tận (Infinite Scroll) khi duyệt theo từng chuyên mục.
-- **Trình phát ExoPlayer chuyên nghiệp**: HLS m3u8, MP4, tự động xoay ngang toàn màn hình (Sensor Landscape), chống tắt màn hình.
+Dự án cung cấp giải pháp xem phim không bị khóa:
 
 ---
 
-## 🚀 Tải về cài đặt
+## 🌟 1. Vax-ver2.apk (Bản Clone Vax Player gốc - Không bao giờ bị khóa)
 
-👉 **[Tải PeihMovie-release.apk mới nhất (v1.1.0)](https://github.com/peihdoolb/movie/releases/download/v1.1.0/PeihMovie-release.apk)**
+Bản clone trực tiếp từ Vax Player gốc, giữ lại **100% giao diện, tính năng, hiệu ứng và cơ chế đổi nguồn động của Vax Player**:
+- **Không bao giờ bị khóa từ xa**: Đã can thiệp vào mã máy (DEX), chuyển hướng cơ chế kiểm tra `update.json` về server GitHub của bạn ([`up.json`](https://github.com/peihdoolb/movie/blob/main/up.json)).
+- **Tự động nhận diện mã viết tắt**: Hoạt động hoàn hảo với `moviex`, `filex`, `xfile`...
+- **Đổi nguồn đổi toàn bộ Trang chủ**: Đúng chuẩn cơ chế Plugin-Driven UI của Vax.
 
-Hoặc truy cập: [GitHub Releases](https://github.com/peihdoolb/movie/releases)
+👉 **[Tải Vax-ver2.apk](https://github.com/peihdoolb/movie/releases/download/v2.0.0/Vax-ver2.apk)**
 
 ---
 
-## 📂 Cấu trúc dự án
+## 📱 2. PeihMovie (Ứng dụng mở nguồn Android độc lập)
+
+Ứng dụng độc lập viết bằng Kotlin Jetpack Compose + ExoPlayer:
+- Đã sửa triệt để lỗi crash khi chọn tập phim.
+- Tích hợp kho phim KKPhim, OPhim, BluPhim, HH3D, AnimeVV.
+
+👉 **[Tải PeihMovie-release.apk](https://github.com/peihdoolb/movie/releases/download/v2.0.0/PeihMovie-release.apk)**
+
+---
+
+## 📂 3. Cấu trúc dự án
 
 ```text
 peihdoolb/movie/
 ├── .github/workflows/
-│   └── build-apk.yml        # CI/CD tự động build APK trên GitHub Actions
-├── app/                     # Mã nguồn ứng dụng Android Kotlin (Jetpack Compose + ExoPlayer)
-│   ├── build.gradle.kts
-│   ├── src/main/assets/     # Tích hợp sẵn 88 nguồn phim Vax (moviex.json, filex.json...)
-│   └── src/main/java/com/peihdoolb/movie/
-│       ├── MainActivity.kt
-│       ├── ui/screens/
-│       │   ├── HomeScreen.kt    # Trang chủ đa danh mục, Hero banner, chọn nguồn
-│       │   ├── DetailScreen.kt  # Chi tiết phim, chọn server, danh sách tập
-│       │   ├── SearchScreen.kt  # Tìm kiếm phim thời gian thực
-│       │   └── SourcesScreen.kt # Quản lý và tìm kiếm 88 nguồn phim
-│       └── ui/player/
-│           └── VideoPlayerActivity.kt # ExoPlayer toàn màn hình
-└── repo.json                # Repository Manifest cho các app tương thích
+│   └── build-apk.yml        # CI/CD tự động build & patch APK trên GitHub Actions
+├── scripts/
+│   └── patch_vax.py         # Script tự động can thiệp DEX bypass kiểm tra update của Vax
+├── up.json                  # Cấu hình update độc lập luôn mở khóa
+├── data/                    # Toàn bộ kho JSON giải mã của Vax
+├── plugins/                 # Các plugin scraper JS
+└── app/                     # Mã nguồn PeihMovie
 ```

@@ -4,8 +4,10 @@
         <item name="android:navigationBarColor">#121212</item>
     </style>
 
-    <style name="Theme.PeihMovie.Fullscreen" parent="android:Theme.Material.NoActionBar.Fullscreen">
+    <style name="Theme.PeihMovie.Fullscreen" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
+        <item name="android:statusBarColor">#000000</item>
+        <item name="android:navigationBarColor">#000000</item>
     </style>
 </resources>
