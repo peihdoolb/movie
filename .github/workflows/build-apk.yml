@@ -66,21 +66,26 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: v2.0.0
-          name: Vax-ver2 & PeihMovie v2.0.0
+          tag_name: v2.1.0
+          name: Vax-ver2 & PeihMovie v2.1.0
           body: |
-            ## 🚀 Vax-ver2 & PeihMovie Release v2.0.0
+            ## 🚀 Vax-ver2 & PeihMovie Release v2.1.0
             
-            ### 1. 🌟 Vax-ver2 (Bản Clone Vax Player gốc - Vĩnh viễn không bị khóa)
-            - **100% Giao diện, tính năng, hiệu ứng của Vax Player gốc**: Đổi nguồn đổi toàn bộ trang chủ, hỗ trợ đầy đủ các từ viết tắt `moviex`, `filex`, `xfile`.
-            - **Đã patch cơ chế kiểm tra update**: Trỏ về máy chủ `peihdoolb/movie/up.json` của bạn. Không bao giờ bị tác giả bên thứ ba khóa từ xa.
-            - 👉 **[Tải Vax-ver2.apk (Khuyên dùng)](https://github.com/${{ github.repository }}/releases/download/v2.0.0/Vax-ver2.apk)**
+            ### 1. 📱 PeihMovie v2.1.0: Đưa trọn vẹn 88 nguồn phim vào ứng dụng & Thay đổi Trang chủ theo nguồn
+            - **Tích hợp toàn bộ 88 nguồn phim từ hệ thống Vax** vào danh sách plugin mặc định của PeihMovie.
+            - **Cho phép chọn bất kỳ nguồn nào** từ menu chọn nguồn nhanh (Bottom Sheet có thanh tìm kiếm) hoặc trực tiếp tại tab **Kho nguồn**.
+            - **Trang chủ biến đổi hoàn toàn theo nguồn được chọn**:
+              - Chọn **Hoạt Hình 3D (HH3D)**: Toàn bộ Trang chủ biến thành phim hoạt hình 3D Trung Quốc (Đang chiếu: Tiên Nghịch, Thế Giới Hoàn Mỹ, Mục Thần Ký, Võ Thần Chúa Tể..., Phim Chiếu Rạp / OVA, Hoàn Thành).
+              - Chọn **KKPhim**: Toàn bộ Trang chủ hiển thị kho phim KKPhim VIP (Phim Mới, Phim Bộ, Phim Lẻ, Hoạt Hình, TV Shows).
+              - Chọn các nguồn khác (Nguồn C, Anime, Drama, Bom Tấn Chiếu Rạp...): Trang chủ tự động chuyển đổi danh mục và nguồn phim tương ứng.
+            - 👉 **[Tải PeihMovie-release.apk](https://github.com/${{ github.repository }}/releases/download/v2.1.0/PeihMovie-release.apk)**
             
             ---
             
-            ### 2. 📱 PeihMovie v2.0.0 (Bản sửa lỗi Crash trình phát)
-            - Đã sửa triệt để lỗi crash khi chọn tập phim (nâng cấp theme Material3 & AppCompat).
-            - 👉 **[Tải PeihMovie-release.apk](https://github.com/${{ github.repository }}/releases/download/v2.0.0/PeihMovie-release.apk)**
+            ### 2. 🌟 Vax-ver2 (Bản Clone Vax Player gốc - Vĩnh viễn không bị khóa)
+            - **100% Giao diện, tính năng, hiệu ứng của Vax Player gốc**: Đổi nguồn đổi toàn bộ trang chủ, hỗ trợ đầy đủ các từ viết tắt `moviex`, `filex`, `xfile`.
+            - **Đã patch cơ chế kiểm tra update**: Trỏ về máy chủ `peihdoolb/movie/up.json` của bạn. Không bao giờ bị tác giả bên thứ ba khóa từ xa.
+            - 👉 **[Tải Vax-ver2.apk (Khuyên dùng)](https://github.com/${{ github.repository }}/releases/download/v2.1.0/Vax-ver2.apk)**
           files: |
             release-apks/Vax-ver2.apk
             release-apks/PeihMovie-release.apk

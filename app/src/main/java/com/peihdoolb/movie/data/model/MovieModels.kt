@@ -170,3 +170,89 @@ data class ApiEpisodeData(
     @SerialName("link_embed") val linkEmbed: String = "",
     @SerialName("link_m3u8") val linkM3u8: String = ""
 )
+
+// DTOs for Halim / Hoat Hinh 3D (/wp-json/halim/v1/ongoing, movies, completed)
+@Serializable
+data class HalimResponse(
+    val success: Boolean = true,
+    val page: Int = 1,
+    @SerialName("per_page") val perPage: Int = 20,
+    val total: Int = 0,
+    @SerialName("has_more") val hasMore: Boolean = false,
+    val items: List<HalimMovieItem> = emptyList()
+)
+
+@Serializable
+data class HalimMovieItem(
+    val id: Int = 0,
+    val title: String = "",
+    val permalink: String = "",
+    @SerialName("poster_url") val posterUrl: String = "",
+    @SerialName("average_rating") val averageRating: Double = 0.0,
+    @SerialName("latest_episode") val latestEpisode: String = "",
+    @SerialName("schedule_text") val scheduleText: String = "",
+    @SerialName("updated_at") val updatedAt: String = ""
+)
+
+// DTOs for NguonC API
+@Serializable
+data class NguonCListResponse(
+    val status: String = "success",
+    val items: List<NguonCItem> = emptyList(),
+    val paginate: NguonCPaginate? = null
+)
+
+@Serializable
+data class NguonCItem(
+    val name: String = "",
+    val slug: String = "",
+    @SerialName("original_name") val originalName: String = "",
+    @SerialName("thumb_url") val thumbUrl: String = "",
+    @SerialName("poster_url") val posterUrl: String = "",
+    @SerialName("current_episode") val currentEpisode: String = "",
+    val quality: String = "HD",
+    val language: String = "Vietsub",
+    val time: String = ""
+)
+
+@Serializable
+data class NguonCPaginate(
+    @SerialName("current_page") val currentPage: Int = 1,
+    @SerialName("total_page") val totalPage: Int = 1,
+    @SerialName("total_items") val totalItems: Int = 0
+)
+
+@Serializable
+data class NguonCDetailResponse(
+    val status: String = "success",
+    val movie: NguonCDetailData? = null
+)
+
+@Serializable
+data class NguonCDetailData(
+    val name: String = "",
+    val slug: String = "",
+    @SerialName("original_name") val originalName: String = "",
+    val description: String = "",
+    @SerialName("thumb_url") val thumbUrl: String = "",
+    @SerialName("poster_url") val posterUrl: String = "",
+    val time: String = "",
+    val quality: String = "HD",
+    val language: String = "Vietsub",
+    @SerialName("current_episode") val currentEpisode: String = "",
+    val episodes: List<NguonCEpisodeServer> = emptyList()
+)
+
+@Serializable
+data class NguonCEpisodeServer(
+    @SerialName("server_name") val serverName: String = "",
+    val items: List<NguonCEpisodeItem> = emptyList()
+)
+
+@Serializable
+data class NguonCEpisodeItem(
+    val name: String = "",
+    val slug: String = "",
+    val embed: String = "",
+    val m3u8: String = ""
+)

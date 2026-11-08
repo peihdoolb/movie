@@ -18,10 +18,15 @@ Bản clone trực tiếp từ Vax Player gốc, giữ lại **100% giao diện,
 ## 📱 2. PeihMovie (Ứng dụng mở nguồn Android độc lập)
 
 Ứng dụng độc lập viết bằng Kotlin Jetpack Compose + ExoPlayer:
-- Đã sửa triệt để lỗi crash khi chọn tập phim.
-- Tích hợp kho phim KKPhim, OPhim, BluPhim, HH3D, AnimeVV.
+- **Tích hợp trọn vẹn 88 nguồn phim từ hệ thống Vax** vào danh sách plugin mặc định của ứng dụng.
+- **Chọn nguồn linh hoạt**: Chọn nhanh ngay tại Trang chủ (Bottom Sheet có tìm kiếm) hoặc tại tab **Kho nguồn**.
+- **Trang chủ thay đổi 100% theo nguồn được chọn**:
+  - Chọn **Hoạt Hình 3D (HH3D)**: Trang chủ tự động chuyển sang phim hoạt hình 3D (Tiên Nghịch, Thế Giới Hoàn Mỹ, Mục Thần Ký, Võ Thần Chúa Tể..., phân mục Đang Chiếu, Phim Lẻ / OVA, Hoàn Thành).
+  - Chọn **KKPhim**: Hiển thị kho phim điện ảnh, truyền hình, hoạt hình từ KKPhim VIP.
+  - Chọn các nguồn khác (Nguồn C, Anime, Drama, Điện ảnh...): Trang chủ tự động thay đổi danh mục và nguồn phim tương ứng.
+- **Trình phát m3u8 ổn định**: Đã khắc phục triệt để lỗi crash khi chọn tập phim.
 
-👉 **[Tải PeihMovie-release.apk](https://github.com/peihdoolb/movie/releases/download/v2.0.0/PeihMovie-release.apk)**
+👉 **[Tải PeihMovie-release.apk (v2.1.0)](https://github.com/peihdoolb/movie/releases/download/v2.1.0/PeihMovie-release.apk)**
 
 ---
 

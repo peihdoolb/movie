@@ -39,8 +39,8 @@ fun HomeScreen(
     onMovieClick: (String) -> Unit,
     onSearchClick: () -> Unit
 ) {
+    val currentSource = repository.currentSource
     var selectedCategory by remember { mutableStateOf("all") }
-    var currentSource by remember { mutableStateOf(repository.currentSource) }
     var showSourceSheet by remember { mutableStateOf(false) }
 
     var banners by remember { mutableStateOf<List<MovieItem>>(emptyList()) }
@@ -53,17 +53,17 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     val gridState = rememberLazyGridState()
 
-    val categories = listOf(
-        "all" to "Tất cả",
-        "newest" to "Phim Mới",
-        "phim-bo" to "Phim Bộ",
-        "phim-le" to "Phim Lẻ",
-        "hoat-hinh" to "Hoạt Hình",
-        "tv-shows" to "TV Shows"
-    )
+    val categories = remember(currentSource.id) {
+        repository.getCategoriesForCurrentSource()
+    }
+
+    // Reset category when source changes
+    LaunchedEffect(currentSource.id) {
+        selectedCategory = "all"
+    }
 
     // Load initial data
-    LaunchedEffect(currentSource, selectedCategory) {
+    LaunchedEffect(currentSource.id, selectedCategory) {
         isLoading = true
         currentPage = 1
         if (selectedCategory == "all") {
@@ -252,64 +252,150 @@ fun HomeScreen(
             onDismissRequest = { showSourceSheet = false },
             containerColor = MaterialTheme.colorScheme.surface
         ) {
+            var searchSourceQuery by remember { mutableStateOf("") }
+            val filteredSources = remember(searchSourceQuery, repository.availableSources) {
+                if (searchSourceQuery.isBlank()) repository.availableSources
+                else {
+                    val q = searchSourceQuery.trim().lowercase()
+                    repository.availableSources.filter {
+                        it.name.lowercase().contains(q) ||
+                        it.id.lowercase().contains(q) ||
+                        it.description.lowercase().contains(q)
+                    }
+                }
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 12.dp)
+                    .fillMaxHeight(0.85f)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                Text(
-                    text = "Chọn nguồn phát (Kho Plugin)",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Chọn nguồn phát (${repository.availableSources.size} nguồn)",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    IconButton(onClick = { showSourceSheet = false }) {
+                        Icon(Icons.Default.Clear, contentDescription = "Đóng")
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                OutlinedTextField(
+                    value = searchSourceQuery,
+                    onValueChange = { searchSourceQuery = it },
+                    placeholder = { Text("Tìm kiếm trong ${repository.availableSources.size} nguồn...") },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    trailingIcon = {
+                        if (searchSourceQuery.isNotEmpty()) {
+                            IconButton(onClick = { searchSourceQuery = "" }) {
+                                Icon(Icons.Default.Clear, contentDescription = "Xóa")
+                            }
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
+                    ),
+                    singleLine = true
                 )
+
                 Spacer(modifier = Modifier.height(12.dp))
 
-                repository.availableSources.forEach { source ->
-                    val isSelected = currentSource.id == source.id
-                    Card(
-                        onClick = {
-                            repository.currentSource = source
-                            currentSource = source
-                            showSourceSheet = false
-                        },
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else Color.Transparent
-                        ),
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(bottom = 24.dp)
+                ) {
+                    items(filteredSources, key = { it.id }) { source ->
+                        val isSelected = currentSource.id == source.id
+                        Card(
+                            onClick = {
+                                repository.currentSource = source
+                                showSourceSheet = false
+                            },
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+                            ),
+                            shape = RoundedCornerShape(12.dp),
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Icon(
-                                if (isSelected) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
-                                contentDescription = null,
-                                tint = if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray
-                            )
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = source.name,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 15.sp,
-                                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
-                                )
-                                Text(
-                                    text = source.description,
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                                )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                if (source.icon.isNotEmpty()) {
+                                    AsyncImage(
+                                        model = source.icon,
+                                        contentDescription = source.name,
+                                        modifier = Modifier.size(36.dp)
+                                    )
+                                } else {
+                                    Icon(
+                                        if (isSelected) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked,
+                                        contentDescription = null,
+                                        tint = if (isSelected) MaterialTheme.colorScheme.primary else Color.Gray,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                    ) {
+                                        Text(
+                                            text = source.name,
+                                            fontWeight = FontWeight.Bold,
+                                            fontSize = 15.sp,
+                                            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                                        )
+                                        if (isSelected) {
+                                            Surface(
+                                                color = MaterialTheme.colorScheme.primary,
+                                                shape = RoundedCornerShape(4.dp)
+                                            ) {
+                                                Text(
+                                                    text = "ĐANG DÙNG",
+                                                    color = Color.White,
+                                                    fontSize = 9.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+                                                )
+                                            }
+                                        }
+                                    }
+                                    Text(
+                                        text = source.description,
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                }
+                                if (isSelected) {
+                                    Icon(
+                                        Icons.Default.CheckCircle,
+                                        contentDescription = "Đang chọn",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
                             }
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }
